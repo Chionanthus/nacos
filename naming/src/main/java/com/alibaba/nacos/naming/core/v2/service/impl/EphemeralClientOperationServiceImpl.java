@@ -149,13 +149,29 @@ public class EphemeralClientOperationServiceImpl implements ClientOperationServi
     @Override
     public void fuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
             Subscriber fuzzySubscriber, String clientId) {
-        // TODO
+        String fuzzySubscribePattern = NamingUtils.getGroupedName(serviceNamePattern, groupNamePattern);
+        String completedPattern =  NamingUtils.getCompletedPattern(namespaceId, fuzzySubscribePattern);
+        Client client = clientManager.getClient(clientId);
+        if (!clientIsLegal(client, clientId)) {
+            return;
+        }
+        client.addServiceFuzzySubscriber(completedPattern, fuzzySubscriber);
+        client.setLastUpdatedTime();
+        NotifyCenter.publishEvent(new ClientOperationEvent.ClientFuzzySubscribeEvent(completedPattern, clientId));
     }
     
     @Override
     public void cancelFuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
             Subscriber fuzzySubscriber, String clientId) {
-        // TODO
+        String fuzzySubscribePattern = NamingUtils.getGroupedName(serviceNamePattern, groupNamePattern);
+        String completedPattern =  NamingUtils.getCompletedPattern(namespaceId, fuzzySubscribePattern);
+        Client client = clientManager.getClient(clientId);
+        if (!clientIsLegal(client, clientId)) {
+            return;
+        }
+        client.removeServiceFuzzySubscriber(completedPattern);
+        client.setLastUpdatedTime();
+        NotifyCenter.publishEvent(new ClientOperationEvent.ClientCancelFuzzySubscribeEvent(completedPattern, clientId));
     }
     
     private boolean clientIsLegal(Client client, String clientId) {
