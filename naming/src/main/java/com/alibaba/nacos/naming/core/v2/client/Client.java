@@ -123,6 +123,38 @@ public interface Client {
     Collection<Service> getAllSubscribeService();
     
     /**
+     * Add a new subscriber for a pattern.
+     *
+     * @param fuzzySubscribePattern fuzzy subscription patten
+     * @param subscriber subscriber
+     * @return true if add successfully, otherwise false
+     */
+    boolean addServiceFuzzySubscriber(String fuzzySubscribePattern, Subscriber subscriber);
+    
+    /**
+     * remove subscriber of a fuzzy subscription pattern.
+     *
+     * @param fuzzySubscribePattern fuzzy subscription patten
+     * @return subscriber
+     */
+    boolean removeServiceFuzzySubscriber(String fuzzySubscribePattern);
+    
+    /**
+     * Get subscriber of fuzzy subscription from client.
+     *
+     * @param fuzzyServicePattern fuzzy subscription pattern
+     * @return subscriber
+     */
+    Subscriber getFuzzySubscriber(String fuzzyServicePattern);
+    
+    /**
+     * Get all fuzzy subscribe pattern of current client.
+     *
+     * @return fuzzy subscribe pattern
+     */
+    Collection<String> getAllFuzzySubscribePattern();
+    
+    /**
      * Generate sync data.
      *
      * @return sync data

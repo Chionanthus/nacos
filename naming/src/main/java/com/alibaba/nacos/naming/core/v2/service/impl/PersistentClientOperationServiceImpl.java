@@ -182,6 +182,18 @@ public class PersistentClientOperationServiceImpl extends RequestProcessor4CP im
     }
     
     @Override
+    public void fuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        throw new UnsupportedOperationException("No persistent subscribers");
+    }
+    
+    @Override
+    public void cancelFuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        throw new UnsupportedOperationException("No persistent subscribers");
+    }
+    
+    @Override
     public Response onRequest(ReadRequest request) {
         throw new UnsupportedOperationException("Temporary does not support");
     }

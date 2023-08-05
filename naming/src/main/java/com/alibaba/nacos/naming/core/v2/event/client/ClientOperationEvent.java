@@ -94,6 +94,38 @@ public class ClientOperationEvent extends Event {
         }
     }
     
+    public static class ClientFuzzySubscribeEvent extends ClientOperationEvent {
+        
+        private static final long serialVersionUID = -4518919987813223119L;
+        
+        private final String fuzzySubscribePattern;
+        
+        public ClientFuzzySubscribeEvent(String fuzzySubscribePattern, String clientId) {
+            super(clientId, null);
+            this.fuzzySubscribePattern = fuzzySubscribePattern;
+        }
+        
+        public String getFuzzySubscribePattern() {
+            return fuzzySubscribePattern;
+        }
+    }
+    
+    public static class ClientCancelFuzzySubscribeEvent extends ClientOperationEvent {
+        
+        private static final long serialVersionUID = -4518919987813223118L;
+        
+        private final String fuzzySubscribePattern;
+        
+        public ClientCancelFuzzySubscribeEvent(String fuzzySubscribePattern, String clientId) {
+            super(clientId, null);
+            this.fuzzySubscribePattern = fuzzySubscribePattern;
+        }
+        
+        public String getFuzzySubscribePattern() {
+            return fuzzySubscribePattern;
+        }
+    }
+    
     public static class ClientReleaseEvent extends ClientOperationEvent {
     
         private static final long serialVersionUID = -281486927726245701L;

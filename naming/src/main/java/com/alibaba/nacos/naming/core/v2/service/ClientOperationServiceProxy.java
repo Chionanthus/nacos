@@ -85,6 +85,18 @@ public class ClientOperationServiceProxy implements ClientOperationService {
         ephemeralClientOperationService.unsubscribeService(service, subscriber, clientId);
     }
     
+    @Override
+    public void fuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        ephemeralClientOperationService.fuzzySubscribeService(namespaceId, serviceNamePattern, groupNamePattern, fuzzySubscriber, clientId);
+    }
+    
+    @Override
+    public void cancelFuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        ephemeralClientOperationService.cancelFuzzySubscribeService(namespaceId, serviceNamePattern, groupNamePattern, fuzzySubscriber, clientId);
+    }
+    
     private ClientOperationService chooseClientOperationService(final Instance instance) {
         return instance.isEphemeral() ? ephemeralClientOperationService : persistentClientOperationService;
     }

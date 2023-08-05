@@ -47,6 +47,8 @@ public abstract class AbstractClient implements Client {
     
     protected final ConcurrentHashMap<Service, Subscriber> subscribers = new ConcurrentHashMap<>(16, 0.75f, 1);
     
+    protected final ConcurrentHashMap<String, Subscriber> fuzzySubscribers = new ConcurrentHashMap<>(16, 0.75f, 1);
+    
     protected volatile long lastUpdatedTime;
     
     protected final AtomicLong revision;
@@ -131,6 +133,34 @@ public abstract class AbstractClient implements Client {
     @Override
     public Collection<Service> getAllSubscribeService() {
         return subscribers.keySet();
+    }
+    
+    @Override
+    public boolean addServiceFuzzySubscriber(String fuzzySubscribePattern, Subscriber fuzzySubscriber) {
+        if (null == fuzzySubscribers.put(fuzzySubscribePattern, fuzzySubscriber)) {
+            // TODO:MetricsMonitor
+            return true;
+        }
+        return true;
+    }
+    
+    @Override
+    public boolean removeServiceFuzzySubscriber(String fuzzyServicePatten) {
+        if (null != fuzzySubscribers.remove(fuzzyServicePatten)) {
+            // TODO:MetricsMonitor
+            return true;
+        }
+        return true;
+    }
+    
+    @Override
+    public Subscriber getFuzzySubscriber(String fuzzyServicePatten) {
+        return fuzzySubscribers.get(fuzzyServicePatten);
+    }
+    
+    @Override
+    public Collection<String> getAllFuzzySubscribePattern() {
+        return fuzzySubscribers.keySet();
     }
     
     @Override
