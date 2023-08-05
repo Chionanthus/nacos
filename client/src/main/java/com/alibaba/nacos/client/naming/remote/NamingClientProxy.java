@@ -183,6 +183,23 @@ public interface NamingClientProxy extends Closeable {
     boolean isSubscribed(String serviceName, String groupName, String clusters) throws NacosException;
     
     /**
+     * Fuzzy subscribe service.
+     *
+     * @param serviceNamePattern service name pattern
+     * @param groupNamePattern group name pattern
+     * @throws NacosException nacos exception
+     */
+    void fuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException;
+    
+    /** Cancel fuzzy subscribe service.
+     *
+     * @param serviceNamePattern service name pattern
+     * @param groupNamePattern group name pattern
+     * @throws NacosException nacos exception
+     */
+    void cancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException;
+    
+    /**
      * Check Server healthy.
      *
      * @return true if server is healthy

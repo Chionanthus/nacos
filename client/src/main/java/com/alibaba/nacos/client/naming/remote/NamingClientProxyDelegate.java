@@ -190,6 +190,19 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
     }
     
     @Override
+    public void fuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        NAMING_LOGGER.info("[FUZZY-SUBSCRIBE] serviceNamePattern:{}, groupNamePattern:{}", serviceNamePattern, groupNamePattern);
+        grpcClientProxy.fuzzySubscribe(serviceNamePattern, groupNamePattern);
+    }
+    
+    @Override
+    public void cancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        NAMING_LOGGER
+                .debug("[CANCEL-FUZZY-SUBSCRIBE] serviceNamePattern:{}, groupNamePattern:{} ", serviceNamePattern, groupNamePattern);
+        grpcClientProxy.cancelFuzzySubscribe(serviceNamePattern, groupNamePattern);
+    }
+    
+    @Override
     public boolean serverHealthy() {
         return grpcClientProxy.serverHealthy() || httpClientProxy.serverHealthy();
     }

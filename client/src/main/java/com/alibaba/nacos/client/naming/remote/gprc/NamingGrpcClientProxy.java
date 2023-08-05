@@ -26,11 +26,13 @@ import com.alibaba.nacos.api.naming.pojo.ServiceInfo;
 import com.alibaba.nacos.api.naming.remote.NamingRemoteConstants;
 import com.alibaba.nacos.api.naming.remote.request.AbstractNamingRequest;
 import com.alibaba.nacos.api.naming.remote.request.BatchInstanceRequest;
+import com.alibaba.nacos.api.naming.remote.request.FuzzySubscribeRequest;
 import com.alibaba.nacos.api.naming.remote.request.InstanceRequest;
 import com.alibaba.nacos.api.naming.remote.request.ServiceListRequest;
 import com.alibaba.nacos.api.naming.remote.request.ServiceQueryRequest;
 import com.alibaba.nacos.api.naming.remote.request.SubscribeServiceRequest;
 import com.alibaba.nacos.api.naming.remote.response.BatchInstanceResponse;
+import com.alibaba.nacos.api.naming.remote.response.FuzzySubscribeResponse;
 import com.alibaba.nacos.api.naming.remote.response.QueryServiceResponse;
 import com.alibaba.nacos.api.naming.remote.response.ServiceListResponse;
 import com.alibaba.nacos.api.naming.remote.response.SubscribeServiceResponse;
@@ -346,6 +348,52 @@ public class NamingGrpcClientProxy extends AbstractNamingClientProxy {
                 false);
         requestToServer(request, SubscribeServiceResponse.class);
         redoService.removeSubscriberForRedo(serviceName, groupName, clusters);
+    }
+    
+    @Override
+    public void fuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        if (NAMING_LOGGER.isDebugEnabled()) {
+            NAMING_LOGGER.debug("[GRPC-FUZZY-SUBSCRIBE] servicePattern:{}, groupPattern:{}", serviceNamePattern, groupNamePattern);
+        }
+        // redoService.cacheSubscriberForRedo(serviceNamePattern, groupNamePattern, "", true);
+        doFuzzySubscribe(serviceNamePattern, groupNamePattern);
+    }
+    
+    /**
+     * Execute fuzzy subscribe operation.
+     *
+     * @param serviceNamePattern service name pattern
+     * @param groupNamePattern   group name pattern
+     * @throws NacosException nacos exception
+     */
+    public void doFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        FuzzySubscribeRequest request = new FuzzySubscribeRequest(namespaceId, serviceNamePattern, groupNamePattern,
+                NamingRemoteConstants.FUZZY_SUBSCRIBE_SERVICE);
+        requestToServer(request, FuzzySubscribeResponse.class);
+        // redoService.subscriberRegistered(serviceNamePattern, groupNamePattern, "");
+    }
+    
+    @Override
+    public void cancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        if (NAMING_LOGGER.isDebugEnabled()) {
+            NAMING_LOGGER.debug("[GRPC-CANCEL-FUZZY-SUBSCRIBE] serviceNamePattern:{}, groupNamePattern:{} ", serviceNamePattern, groupNamePattern);
+        }
+        // redoService.subscriberDeregister(serviceNamePattern, groupNamePattern, "");
+        doCancelFuzzySubscribe(serviceNamePattern, groupNamePattern);
+    }
+    
+    /**
+     * Execute cancel fuzzy subscribe operation.
+     *
+     * @param serviceNamePattern service name pattern
+     * @param groupNamePattern   group name pattern
+     * @throws NacosException nacos exception
+     */
+    public void doCancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        FuzzySubscribeRequest request = new FuzzySubscribeRequest(namespaceId, serviceNamePattern, groupNamePattern,
+                NamingRemoteConstants.CANCEL_FUZZY_SUBSCRIBE_SERVICE);
+        requestToServer(request, FuzzySubscribeResponse.class);
+        // redoService.removeSubscriberForRedo(serviceNamePattern, groupNamePattern, "");
     }
     
     @Override

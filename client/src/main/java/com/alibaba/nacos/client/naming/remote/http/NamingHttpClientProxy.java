@@ -342,6 +342,16 @@ public class NamingHttpClientProxy extends AbstractNamingClientProxy {
         return true;
     }
     
+    @Override
+    public void fuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        throw new UnsupportedOperationException("Do not support fuzzy subscribe service by UDP, please use gRPC replaced.");
+    }
+    
+    @Override
+    public void cancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        throw new UnsupportedOperationException("Do not support fuzzy subscribe service by UDP, please use gRPC replaced.");
+    }
+    
     public String reqApi(String api, Map<String, String> params, String method) throws NacosException {
         return reqApi(api, params, Collections.EMPTY_MAP, method);
     }

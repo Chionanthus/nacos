@@ -174,6 +174,16 @@ public class AbstractNamingClientProxyTest {
         }
         
         @Override
+        public void fuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        
+        }
+        
+        @Override
+        public void cancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        
+        }
+        
+        @Override
         public boolean serverHealthy() {
             return false;
         }

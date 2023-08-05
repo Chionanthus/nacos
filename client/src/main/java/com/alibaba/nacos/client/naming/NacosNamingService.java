@@ -450,7 +450,7 @@ public class NacosNamingService implements NamingService {
             return;
         }
         changeNotifier.registerFuzzyListener(serviceNamePattern, groupNamePattern, listener);
-        // clientProxy.fuzzySubscribe(serviceNamePattern, groupNamePattern);
+        clientProxy.fuzzySubscribe(serviceNamePattern, groupNamePattern);
     }
     
     @Override
@@ -466,7 +466,7 @@ public class NacosNamingService implements NamingService {
     
     private void doCancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
         changeNotifier.deregisterFuzzyListener(serviceNamePattern, groupNamePattern);
-        // clientProxy.cancelFuzzySubscribe(serviceNamePattern, groupNamePattern);
+        clientProxy.cancelFuzzySubscribe(serviceNamePattern, groupNamePattern);
     }
     
     @Override
