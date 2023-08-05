@@ -137,7 +137,7 @@ public class RedoScheduledTaskTest {
     }
     
     private Set<SubscriberRedoData> generateMockSubscriberData(boolean registered, boolean unregistering, boolean expectedRegistered) {
-        SubscriberRedoData redoData = SubscriberRedoData.build(SERVICE, GROUP, CLUSTER);
+        SubscriberRedoData redoData = SubscriberRedoData.build(SERVICE, GROUP, CLUSTER, false);
         redoData.setRegistered(registered);
         redoData.setUnregistering(unregistering);
         redoData.setExpectedRegistered(expectedRegistered);
