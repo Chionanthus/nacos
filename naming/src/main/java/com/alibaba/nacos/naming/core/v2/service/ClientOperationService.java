@@ -86,6 +86,32 @@ public interface ClientOperationService {
     }
     
     /**
+     * add a fuzzy subscribe pattern.
+     * @param namespaceId name space id of this pattern
+     * @param serviceNamePattern fuzzy subscribe service name pattern
+     * @param groupNamePattern fuzzy subscribe service name pattern
+     * @param fuzzySubscriber subscribe
+     * @param clientId id of client
+     */
+    default void fuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        
+    }
+    
+    /**
+     * remove a fuzzy subscribe pattern.
+     * @param namespaceId name space id of this pattern
+     * @param serviceNamePattern fuzzy subscribe service name pattern
+     * @param groupNamePattern fuzzy subscribe service name pattern
+     * @param fuzzySubscriber subscribe
+     * @param clientId id of client
+     */
+    default void cancelFuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        
+    }
+    
+    /**
      * get publish info.
      *
      * @param instance {@link Instance}

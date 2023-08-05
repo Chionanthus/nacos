@@ -146,6 +146,18 @@ public class EphemeralClientOperationServiceImpl implements ClientOperationServi
         NotifyCenter.publishEvent(new ClientOperationEvent.ClientUnsubscribeServiceEvent(singleton, clientId));
     }
     
+    @Override
+    public void fuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        // TODO
+    }
+    
+    @Override
+    public void cancelFuzzySubscribeService(String namespaceId, String serviceNamePattern, String groupNamePattern,
+            Subscriber fuzzySubscriber, String clientId) {
+        // TODO
+    }
+    
     private boolean clientIsLegal(Client client, String clientId) {
         if (client == null) {
             Loggers.SRV_LOG.warn("Client connection {} already disconnect", clientId);
