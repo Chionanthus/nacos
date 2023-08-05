@@ -108,6 +108,7 @@ public class NamingSubscriberServiceV2Impl extends SmartSubscriber implements Na
         List<Class<? extends Event>> result = new LinkedList<>();
         result.add(ServiceEvent.ServiceChangedEvent.class);
         result.add(ServiceEvent.ServiceSubscribedEvent.class);
+        result.add(ServiceEvent.FuzzySubscribeEvent.class);
         return result;
     }
     
@@ -125,6 +126,14 @@ public class NamingSubscriberServiceV2Impl extends SmartSubscriber implements Na
             Service service = subscribedEvent.getService();
             delayTaskEngine.addTask(service, new PushDelayTask(service, PushConfig.getInstance().getPushTaskDelay(),
                     subscribedEvent.getClientId()));
+        } else if (event instanceof ServiceEvent.FuzzySubscribeEvent) {
+            ServiceEvent.FuzzySubscribeEvent fuzzySubscribeEvent = (ServiceEvent.FuzzySubscribeEvent) event;
+            String completedPattern = fuzzySubscribeEvent.getFuzzySubscribePattern();
+            Collection<Service> matchedService = fuzzySubscribeEvent.getMatchedService();
+            for (Service service : matchedService) {
+                delayTaskEngine.addTask(service, new PushDelayTask(service, PushConfig.getInstance().getPushTaskDelay(),
+                        fuzzySubscribeEvent.getClientId(), completedPattern));
+            }
         }
     }
     

@@ -22,6 +22,7 @@ import com.alibaba.nacos.common.task.AbstractExecuteTask;
 import com.alibaba.nacos.common.trace.event.naming.PushServiceTraceEvent;
 import com.alibaba.nacos.naming.core.v2.client.Client;
 import com.alibaba.nacos.naming.core.v2.client.manager.ClientManager;
+import com.alibaba.nacos.naming.core.v2.index.ClientServiceIndexesManager;
 import com.alibaba.nacos.naming.core.v2.metadata.ServiceMetadata;
 import com.alibaba.nacos.naming.core.v2.pojo.Service;
 import com.alibaba.nacos.naming.misc.Loggers;
@@ -33,6 +34,9 @@ import com.alibaba.nacos.naming.push.v2.hook.PushResult;
 import com.alibaba.nacos.naming.push.v2.hook.PushResultHookHolder;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Nacos naming push execute task.
@@ -58,7 +62,8 @@ public class PushExecuteTask extends AbstractExecuteTask {
         try {
             PushDataWrapper wrapper = generatePushData();
             ClientManager clientManager = delayTaskEngine.getClientManager();
-            for (String each : getTargetClientIds()) {
+            Collection<String> subscribeNotifyClientID = getTargetClientIds();
+            for (String each : subscribeNotifyClientID) {
                 Client client = clientManager.getClient(each);
                 if (null == client) {
                     // means this client has disconnect
@@ -71,6 +76,19 @@ public class PushExecuteTask extends AbstractExecuteTask {
                 }
                 delayTaskEngine.getPushExecutor().doPushWithCallback(each, subscriber, wrapper,
                         new ServicePushCallback(each, subscriber, wrapper.getOriginalData(), delayTask.isPushToAll()));
+            }
+            Map<String, String> fuzzySubscribeNotifyClientID = getFuzzySubscribeClientIds(subscribeNotifyClientID);
+            for (Map.Entry<String, String> entry : fuzzySubscribeNotifyClientID.entrySet()) {
+                Client client = clientManager.getClient(entry.getKey());
+                if (null == client) {
+                    continue;
+                }
+                Subscriber fuzzySubscriber = client.getFuzzySubscriber(entry.getValue());
+                if (fuzzySubscriber == null) {
+                    continue;
+                }
+                delayTaskEngine.getPushExecutor().doPushWithCallback(entry.getKey(), fuzzySubscriber, wrapper,
+                        new ServicePushCallback(entry.getKey(), fuzzySubscriber, wrapper.getOriginalData(), delayTask.isPushToAll()));
             }
         } catch (Exception e) {
             Loggers.PUSH.error("Push task for service" + service.getGroupedServiceName() + " execute failed ", e);
@@ -85,8 +103,46 @@ public class PushExecuteTask extends AbstractExecuteTask {
     }
     
     private Collection<String> getTargetClientIds() {
+        if (delayTask.isInitialFuzzySubscribe()) {
+            return new HashSet<>(1);
+        }
         return delayTask.isPushToAll() ? delayTaskEngine.getIndexesManager().getAllClientsSubscribeService(service)
                 : delayTask.getTargetClients();
+    }
+    
+    /**
+     * Only if the client's fuzzy subscription request matches the service but is unsubscribed ,
+     * it will be added to the notifyClientID of the additional notification.
+     *
+     * @return A map of ClientID need to be additionally notified
+     *         The content of map is {clientID -> one of the match fuzzySubscribePattern}
+     */
+    private Map<String, String> getFuzzySubscribeClientIds(Collection<String> notifiedClientIds) {
+        Map<String, String> fuzzySubscribeNotifyClientIds = new HashMap<>(8);
+        if (delayTask.isInitialFuzzySubscribe()) {
+            for (String each : delayTask.getTargetClients()) {
+                fuzzySubscribeNotifyClientIds.put(each, delayTask.getMatchedPattern());
+            }
+            return fuzzySubscribeNotifyClientIds;
+        }
+        
+        ClientServiceIndexesManager indexesManager = delayTaskEngine.getIndexesManager();
+        Collection<String> matchedPattern =  indexesManager.getFuzzySubscribeMatchIndexes(service);
+        for (String eachPattern : matchedPattern) {
+            Collection<String> clientIDs = indexesManager.getAllClientFuzzySubscribe(eachPattern);
+            if (clientIDs == null || clientIDs.isEmpty()) {
+                // there is nobody listen to this fuzzy subscribe pattern
+                indexesManager.removeFuzzySubscriptionMatchIndex(service, eachPattern);
+                continue;
+            }
+            for (String clientId : clientIDs) {
+                // Only one of the matching patterns is needed to get the 'subscriber' object
+                if (!notifiedClientIds.contains(clientId) && !fuzzySubscribeNotifyClientIds.containsKey(clientId)) {
+                    fuzzySubscribeNotifyClientIds.put(clientId, eachPattern);
+                }
+            }
+        }
+        return fuzzySubscribeNotifyClientIds;
     }
     
     private class ServicePushCallback implements NamingPushCallback {

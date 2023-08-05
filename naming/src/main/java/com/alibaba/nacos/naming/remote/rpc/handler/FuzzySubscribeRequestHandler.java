@@ -55,14 +55,13 @@ public class FuzzySubscribeRequestHandler extends RequestHandler<FuzzySubscribeR
                 namespaceId, groupedServicePattern, 0, "");
         switch (request.getType()) {
             case NamingRemoteConstants.FUZZY_SUBSCRIBE_SERVICE:
-                // TODO
-                // clientOperationService.fuzzySubscribeService(namespaceId, serviceNamePattern, groupNamePattern,
-                //        fuzzySubscriber, meta.getConnectionId());
+                clientOperationService.fuzzySubscribeService(namespaceId, serviceNamePattern, groupNamePattern,
+                        fuzzySubscriber, meta.getConnectionId());
                 return FuzzySubscribeResponse.buildSuccessResponse(NamingRemoteConstants.FUZZY_SUBSCRIBE_SERVICE);
             case NamingRemoteConstants.CANCEL_FUZZY_SUBSCRIBE_SERVICE:
-                // TODO
-                // clientOperationService.cancelFuzzySubscribeService(namespaceId, serviceNamePattern, groupNamePattern,
-                //         fuzzySubscriber, meta.getConnectionId());
+                
+                clientOperationService.cancelFuzzySubscribeService(namespaceId, serviceNamePattern, groupNamePattern,
+                        fuzzySubscriber, meta.getConnectionId());
                 return FuzzySubscribeResponse.buildSuccessResponse(NamingRemoteConstants.CANCEL_FUZZY_SUBSCRIBE_SERVICE);
             default:
                 throw new NacosException(NacosException.INVALID_PARAM,

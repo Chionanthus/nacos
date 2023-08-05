@@ -34,11 +34,16 @@ public class PushDelayTask extends AbstractDelayTask {
     
     private boolean pushToAll;
     
+    private boolean isInitialFuzzySubscribe;
+    
+    private String matchedPattern;
+    
     private Set<String> targetClients;
     
     public PushDelayTask(Service service, long delay) {
         this.service = service;
         pushToAll = true;
+        this.isInitialFuzzySubscribe = false;
         targetClients = null;
         setTaskInterval(delay);
         setLastProcessTime(System.currentTimeMillis());
@@ -47,6 +52,18 @@ public class PushDelayTask extends AbstractDelayTask {
     public PushDelayTask(Service service, long delay, String targetClient) {
         this.service = service;
         this.pushToAll = false;
+        this.isInitialFuzzySubscribe = false;
+        this.targetClients = new HashSet<>(1);
+        this.targetClients.add(targetClient);
+        setTaskInterval(delay);
+        setLastProcessTime(System.currentTimeMillis());
+    }
+    
+    public PushDelayTask(Service service, long delay, String targetClient, String matchedPattern) {
+        this.service = service;
+        this.pushToAll = false;
+        this.isInitialFuzzySubscribe = true;
+        this.matchedPattern = matchedPattern;
         this.targetClients = new HashSet<>(1);
         this.targetClients.add(targetClient);
         setTaskInterval(delay);
@@ -62,6 +79,8 @@ public class PushDelayTask extends AbstractDelayTask {
         if (isPushToAll() || oldTask.isPushToAll()) {
             pushToAll = true;
             targetClients = null;
+            isInitialFuzzySubscribe = false;
+            matchedPattern = "";
         } else {
             targetClients.addAll(oldTask.getTargetClients());
         }
@@ -75,6 +94,14 @@ public class PushDelayTask extends AbstractDelayTask {
     
     public boolean isPushToAll() {
         return pushToAll;
+    }
+    
+    public boolean isInitialFuzzySubscribe() {
+        return isInitialFuzzySubscribe;
+    }
+    
+    public String getMatchedPattern() {
+        return matchedPattern;
     }
     
     public Set<String> getTargetClients() {
