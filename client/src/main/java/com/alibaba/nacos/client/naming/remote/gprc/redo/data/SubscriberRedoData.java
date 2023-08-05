@@ -23,6 +23,16 @@ package com.alibaba.nacos.client.naming.remote.gprc.redo.data;
  */
 public class SubscriberRedoData extends RedoData<String> {
     
+    private boolean isFuzzySubscribe;
+    
+    public boolean isFuzzySubscribe() {
+        return isFuzzySubscribe;
+    }
+    
+    public void setFuzzySubscribe(boolean fuzzySubscribe) {
+        isFuzzySubscribe = fuzzySubscribe;
+    }
+    
     private SubscriberRedoData(String serviceName, String groupName) {
         super(serviceName, groupName);
     }
@@ -35,8 +45,9 @@ public class SubscriberRedoData extends RedoData<String> {
      * @param clusters    clusters for redo data
      * @return new {@code RedoData} for subscribers
      */
-    public static SubscriberRedoData build(String serviceName, String groupName, String clusters) {
+    public static SubscriberRedoData build(String serviceName, String groupName, String clusters, boolean isFuzzySubscribe) {
         SubscriberRedoData result = new SubscriberRedoData(serviceName, groupName);
+        result.setFuzzySubscribe(isFuzzySubscribe);
         result.set(clusters);
         return result;
     }

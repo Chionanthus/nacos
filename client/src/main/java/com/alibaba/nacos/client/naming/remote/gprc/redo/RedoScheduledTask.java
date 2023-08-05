@@ -118,24 +118,43 @@ public class RedoScheduledTask extends AbstractExecuteTask {
         String serviceName = redoData.getServiceName();
         String groupName = redoData.getGroupName();
         String cluster = redoData.get();
+        boolean isFuzzySubscribe = redoData.isFuzzySubscribe();
         LogUtils.NAMING_LOGGER.info("Redo subscriber operation {} for {}@@{}#{}", redoType, groupName, serviceName, cluster);
         switch (redoData.getRedoType()) {
             case REGISTER:
                 if (isClientDisabled()) {
                     return;
                 }
-                clientProxy.doSubscribe(serviceName, groupName, cluster);
+                processSubscriberRedoType(serviceName, groupName, cluster, isFuzzySubscribe);
                 break;
             case UNREGISTER:
                 if (isClientDisabled()) {
                     return;
                 }
-                clientProxy.doUnsubscribe(serviceName, groupName, cluster);
+                processUnSubscriberRedoType(serviceName, groupName, cluster, isFuzzySubscribe);
                 break;
             case REMOVE:
                 redoService.removeSubscriberForRedo(redoData.getServiceName(), redoData.getGroupName(), redoData.get());
                 break;
             default:
+        }
+    }
+    
+    private void processSubscriberRedoType(String serviceName, String groupName, String cluster,
+            boolean isFuzzySubscribe) throws NacosException {
+        if (isFuzzySubscribe) {
+            clientProxy.doFuzzySubscribe(serviceName, groupName);
+        } else {
+            clientProxy.doSubscribe(serviceName, groupName, cluster);
+        }
+    }
+    
+    private void processUnSubscriberRedoType(String serviceName, String groupName, String cluster,
+            boolean isFuzzySubscribe) throws NacosException {
+        if (isFuzzySubscribe) {
+            clientProxy.doCancelFuzzySubscribe(serviceName, groupName);
+        } else {
+            clientProxy.doUnsubscribe(serviceName, groupName, cluster);
         }
     }
     

@@ -355,7 +355,7 @@ public class NamingGrpcClientProxy extends AbstractNamingClientProxy {
         if (NAMING_LOGGER.isDebugEnabled()) {
             NAMING_LOGGER.debug("[GRPC-FUZZY-SUBSCRIBE] servicePattern:{}, groupPattern:{}", serviceNamePattern, groupNamePattern);
         }
-        // redoService.cacheSubscriberForRedo(serviceNamePattern, groupNamePattern, "", true);
+        redoService.cacheSubscriberForRedo(serviceNamePattern, groupNamePattern, "", true);
         doFuzzySubscribe(serviceNamePattern, groupNamePattern);
     }
     
@@ -370,7 +370,7 @@ public class NamingGrpcClientProxy extends AbstractNamingClientProxy {
         FuzzySubscribeRequest request = new FuzzySubscribeRequest(namespaceId, serviceNamePattern, groupNamePattern,
                 NamingRemoteConstants.FUZZY_SUBSCRIBE_SERVICE);
         requestToServer(request, FuzzySubscribeResponse.class);
-        // redoService.subscriberRegistered(serviceNamePattern, groupNamePattern, "");
+        redoService.subscriberRegistered(serviceNamePattern, groupNamePattern, "");
     }
     
     @Override
@@ -378,7 +378,7 @@ public class NamingGrpcClientProxy extends AbstractNamingClientProxy {
         if (NAMING_LOGGER.isDebugEnabled()) {
             NAMING_LOGGER.debug("[GRPC-CANCEL-FUZZY-SUBSCRIBE] serviceNamePattern:{}, groupNamePattern:{} ", serviceNamePattern, groupNamePattern);
         }
-        // redoService.subscriberDeregister(serviceNamePattern, groupNamePattern, "");
+        redoService.subscriberDeregister(serviceNamePattern, groupNamePattern, "");
         doCancelFuzzySubscribe(serviceNamePattern, groupNamePattern);
     }
     
@@ -393,7 +393,7 @@ public class NamingGrpcClientProxy extends AbstractNamingClientProxy {
         FuzzySubscribeRequest request = new FuzzySubscribeRequest(namespaceId, serviceNamePattern, groupNamePattern,
                 NamingRemoteConstants.CANCEL_FUZZY_SUBSCRIBE_SERVICE);
         requestToServer(request, FuzzySubscribeResponse.class);
-        // redoService.removeSubscriberForRedo(serviceNamePattern, groupNamePattern, "");
+        redoService.removeSubscriberForRedo(serviceNamePattern, groupNamePattern, "");
     }
     
     @Override

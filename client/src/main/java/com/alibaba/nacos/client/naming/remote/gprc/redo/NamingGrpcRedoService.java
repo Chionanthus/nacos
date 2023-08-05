@@ -211,8 +211,20 @@ public class NamingGrpcRedoService implements ConnectionEventListener {
      * @param cluster     cluster
      */
     public void cacheSubscriberForRedo(String serviceName, String groupName, String cluster) {
+        cacheSubscriberForRedo(serviceName, groupName, cluster, false);
+    }
+    
+    /**
+     * Cache subscriber for redo.
+     *
+     * @param serviceName service name
+     * @param groupName   group name
+     * @param cluster     cluster
+     * @param isFuzzySubscribe is a fuzzy subscription
+     */
+    public void cacheSubscriberForRedo(String serviceName, String groupName, String cluster, boolean isFuzzySubscribe) {
         String key = ServiceInfo.getKey(NamingUtils.getGroupedName(serviceName, groupName), cluster);
-        SubscriberRedoData redoData = SubscriberRedoData.build(serviceName, groupName, cluster);
+        SubscriberRedoData redoData = SubscriberRedoData.build(serviceName, groupName, cluster, isFuzzySubscribe);
         synchronized (subscribes) {
             subscribes.put(key, redoData);
         }
