@@ -182,7 +182,11 @@ public class Constants {
     
     public static final int WRITE_REDIRECT_CODE = 307;
     
+    public static final String NAMESPACE_ID_SPLITER = ">>";
+    
     public static final String SERVICE_INFO_SPLITER = "@@";
+    
+    public static final String MATCH_PATTERN_SPLITER = "##";
     
     public static final int SERVICE_INFO_SPLIT_COUNT = 2;
     
@@ -234,6 +238,17 @@ public class Constants {
         public static final String NAMING_MODULE = "naming";
     
         public static final String CMDB_CONTEXT_TYPE = "CMDB";
+    }
+    
+    /**
+     * The constants in fuzzy subscribe directory.
+     */
+    public static class FuzzySubscribe {
+        
+        public static final String MATCH_ALL = "MATCH_ALL";
+        
+        public static final String MATCH_PREFIX = "MATCH_PREFIX";
+        
     }
     
     /**
