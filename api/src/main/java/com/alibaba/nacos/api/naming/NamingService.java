@@ -532,6 +532,43 @@ public interface NamingService {
     void unsubscribe(String serviceName, String groupName, List<String> clusters, EventListener listener)
             throws NacosException;
     
+    
+    /**
+     * Fuzzy subscribe services to receive events of instances and match services alteration.
+     *
+     * @param fixedGroupName fixed group name for fuzzy subscribe
+     * @param listener event listener
+     * @throws NacosException nacos exception
+     */
+    void fuzzySubscribe(String fixedGroupName, EventListener listener) throws NacosException;
+    
+    /**
+     * Fuzzy subscribe services to receive events of instances and match services alteration.
+     *
+     * @param serviceNamePattern service name pattern for fuzzy subscribe
+     * @param fixedGroupName fixed group name for fuzzy subscribe
+     * @param listener event listener
+     * @throws NacosException nacos exception
+     */
+    void fuzzySubscribe(String serviceNamePattern, String fixedGroupName, EventListener listener) throws NacosException;
+    
+    /**
+     * Cancel fuzzy subscribe of services.
+     *
+     * @param fixedGroupName fixed group name for fuzzy subscribe
+     * @throws NacosException nacos exception
+     */
+    void cancelFuzzySubscribe(String fixedGroupName) throws NacosException;
+    
+    /**
+     * Cancel fuzzy subscribe of services.
+     *
+     * @param serviceNamePattern service name pattern for fuzzy subscribe
+     * @param fixedGroupName fixed group name for fuzzy subscribe
+     * @throws NacosException nacos exception
+     */
+    void cancelFuzzySubscribe(String serviceNamePattern, String fixedGroupName) throws NacosException;
+    
     /**
      * Get all service names from server.
      *

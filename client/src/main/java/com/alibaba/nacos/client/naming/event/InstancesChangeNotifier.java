@@ -45,6 +45,8 @@ public class InstancesChangeNotifier extends Subscriber<InstancesChangeEvent> {
     
     private final Map<String, ConcurrentHashSet<EventListener>> listenerMap = new ConcurrentHashMap<>();
     
+    private final Map<String, EventListener> fuzzySubscribeListenerMap = new ConcurrentHashMap<>();
+    
     @JustForTest
     public InstancesChangeNotifier() {
         this.eventScope = UUID.randomUUID().toString();
@@ -108,6 +110,28 @@ public class InstancesChangeNotifier extends Subscriber<InstancesChangeEvent> {
             serviceInfos.add(ServiceInfo.fromKey(key));
         }
         return serviceInfos;
+    }
+    
+    /** register fuzzy subscribe listener.
+     *  This listener responds to changes of the services (not the instance).
+     *
+     * @param serviceNamePattern service name pattern
+     * @param groupNamePattern group name prefix
+     * @param listener custom listener
+     */
+    public void registerFuzzyListener(String serviceNamePattern, String groupNamePattern, EventListener listener) {
+        String key = NamingUtils.getGroupedName(serviceNamePattern, groupNamePattern);
+        fuzzySubscribeListenerMap.put(key, listener);
+    }
+    
+    /** deregister fuzzy subscribe listener.
+     *
+     * @param serviceNamePrefix service name prefix
+     * @param groupNamePrefix group name prefix
+     */
+    public void deregisterFuzzyListener(String serviceNamePrefix, String groupNamePrefix) {
+        String key = NamingUtils.getGroupedName(serviceNamePrefix, groupNamePrefix);
+        fuzzySubscribeListenerMap.remove(key);
     }
     
     @Override

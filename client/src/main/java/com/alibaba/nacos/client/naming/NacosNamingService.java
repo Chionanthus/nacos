@@ -431,6 +431,45 @@ public class NacosNamingService implements NamingService {
     }
     
     @Override
+    public void fuzzySubscribe(String fixedGroupName, EventListener listener) throws NacosException {
+        // e.g. DEFAULT_GROUP@@MATCH_ALL
+        doFuzzySubscribe(Constants.FuzzySubscribe.MATCH_ALL, fixedGroupName, listener);
+    }
+    
+    @Override
+    public void fuzzySubscribe(String serviceNamePattern, String fixedGroupName, EventListener listener) throws NacosException {
+        // only support prefix match right now
+        // e.g. DEFAULT_GROUP@@nacos.test##MATCH_PREFIX
+        String serviceNamePrefixPattern =  NamingUtils.getGroupedPattern(serviceNamePattern, Constants.FuzzySubscribe.MATCH_PREFIX);
+        doFuzzySubscribe(serviceNamePrefixPattern, fixedGroupName, listener);
+    }
+    
+    private void doFuzzySubscribe(String serviceNamePattern, String groupNamePattern,
+            EventListener listener) throws NacosException {
+        if (null == listener) {
+            return;
+        }
+        changeNotifier.registerFuzzyListener(serviceNamePattern, groupNamePattern, listener);
+        // clientProxy.fuzzySubscribe(serviceNamePattern, groupNamePattern);
+    }
+    
+    @Override
+    public void cancelFuzzySubscribe(String fixedGroupName) throws NacosException {
+        doCancelFuzzySubscribe(Constants.FuzzySubscribe.MATCH_ALL, fixedGroupName);
+    }
+    
+    @Override
+    public void cancelFuzzySubscribe(String serviceNamePattern, String fixedGroupName) throws NacosException {
+        String serviceNamePrefixPattern =  NamingUtils.getGroupedPattern(serviceNamePattern, Constants.FuzzySubscribe.MATCH_PREFIX);
+        doCancelFuzzySubscribe(serviceNamePrefixPattern, fixedGroupName);
+    }
+    
+    private void doCancelFuzzySubscribe(String serviceNamePattern, String groupNamePattern) throws NacosException {
+        changeNotifier.deregisterFuzzyListener(serviceNamePattern, groupNamePattern);
+        // clientProxy.cancelFuzzySubscribe(serviceNamePattern, groupNamePattern);
+    }
+    
+    @Override
     public ListView<String> getServicesOfServer(int pageNo, int pageSize) throws NacosException {
         return getServicesOfServer(pageNo, pageSize, Constants.DEFAULT_GROUP);
     }
