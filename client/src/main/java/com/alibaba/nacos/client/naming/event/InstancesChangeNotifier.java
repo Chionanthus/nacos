@@ -28,8 +28,11 @@ import com.alibaba.nacos.common.utils.CollectionUtils;
 import com.alibaba.nacos.common.utils.ConcurrentHashSet;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -134,11 +137,27 @@ public class InstancesChangeNotifier extends Subscriber<InstancesChangeEvent> {
         fuzzySubscribeListenerMap.remove(key);
     }
     
+    /** return the set of match fuzzy subscription pattern list.
+     *
+     * @param serviceName service name
+     * @param groupName group name
+     * @return match result
+     */
+    public Set<EventListener> getFuzzySubscribeNotifyListener(String serviceName, String groupName) {
+        Collection<String> matchedPatterns = NamingUtils.getServiceMatchedPatterns(serviceName, groupName, fuzzySubscribeListenerMap.keySet());
+        Set<EventListener> notifyListener = new HashSet<>();
+        for (String each : matchedPatterns) {
+            notifyListener.add(fuzzySubscribeListenerMap.get(each));
+        }
+        return notifyListener;
+    }
+    
     @Override
     public void onEvent(InstancesChangeEvent event) {
         String key = ServiceInfo
                 .getKey(NamingUtils.getGroupedName(event.getServiceName(), event.getGroupName()), event.getClusters());
-        ConcurrentHashSet<EventListener> eventListeners = listenerMap.get(key);
+        Set<EventListener> eventListeners = listenerMap.get(key) == null ? new HashSet<>() : listenerMap.get(key);
+        eventListeners.addAll(getFuzzySubscribeNotifyListener(event.getServiceName(), event.getGroupName()));
         if (CollectionUtils.isEmpty(eventListeners)) {
             return;
         }

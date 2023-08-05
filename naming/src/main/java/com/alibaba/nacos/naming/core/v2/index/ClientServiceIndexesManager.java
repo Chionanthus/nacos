@@ -208,7 +208,6 @@ public class ClientServiceIndexesManager extends SmartSubscriber {
             Collection<Service> matchedService = updateFuzzySubscriptionIndex(completedPattern);
             NotifyCenter.publishEvent(new ServiceEvent.FuzzySubscribeEvent(clientId, completedPattern, matchedService));
         }
-        System.out.println("exist-fuzzy-pattern:" + fuzzySubscriberIndexes.keySet());
     }
     
     private void removeFuzzySubscriberIndexes(String completedPattern, String clientId) {
